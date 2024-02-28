@@ -7,12 +7,10 @@
 ## 環境構築
 メールで送られてきた https://jet-blog.com/clang_lesson002/ に従い作業してください．  
 たぶん2022年版を推奨されますが，2019でも2022でも変わらないと思います．  
-\\
+
 一通りインストールできたらエクスプローラとデバッグ出力を表示させておくと便利だと思います．  
 
-<div style="text-align:center;">
   <img src="/img/vsstatus.png" alt="VS Status" width="480" height="270">
-</div>
 
 またコーディング自体はVScodeを使うともっと楽だと思いますがパソコンに慣れてないならVSで問題ないです．  
 
