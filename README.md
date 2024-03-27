@@ -406,3 +406,120 @@ asciiコードを見てみると，大文字と同じように小文字も連番
 - StdChr_Toupper
 
 を実装することができます．
+
+# StdStr
+## StdStr_Strerror
+与えられた入力に対応するエラーメッセージを標準ストリームへ出力する
+ログファイルは 02-11-001.log より確認できます．  
+
+### ログファイルを見てみよう
+02-11-001.log より，どんな入力に対しどんな出力を得るか見てみましょう．  
+見てみるとエラー番号0から40までの整数に対応するエラーメッセージが確認できます．
+
+### 標準関数をぶったたいてみる
+ログには0から40だけの出力を確認できますが，
+ここに41以上とか-1以下の整数に対しての出力は提供されていないのかが分からないので
+以下のプログラムを適当な関数内で呼び出してみてください
+
+```c
+for(int i = -10; i < 100; i++) {
+    char* p = strerror(i);
+    printf("%d %s\n", i, p);
+}
+```
+
+で値域が本当に0から40なのか，また地域外の入力に対してはどのような文字列を返却するとかを確認しましょう．
+一部引用でこんな感じ
+
+```
+-3 Unknown error
+-2 Unknown error
+-1 Unknown error
+0 No error
+1 Operation not permitted
+2 No such file or directory
+3 No such process
+```
+
+自分で確認すること！
+
+### 実装してみよう
+実装するにあたってメモリについて一度確認します．
+c言語は関数の実行時にメモリを確保し（関数内の変数の所在が確定している），
+他の関数やプロセスが使えるように関数の終了時にメモリを解放します（関数内の変数を参照できなくなる）．
+よって，関数内のポインタを関数の戻り値にすると，テストプログラムが確認するときに開放済みのメモリを参照してしまいます．
+これでうまくいく場合もありますが（たぶん3回に2回とか？），windowsで走る他のプログラムによって汚されている場合があるのでやめましょう．
+また，最終的に同じ結果を得られるならばプログラムが占有するメモリは小さい方が良いので，
+確保するグローバル変数はなるべく小さくしましょう．
+
+ここらへんはdiscordで画像で解説してます．
+
+で結局こんな実装になりました．
+```c
+char8t* StdStr_Strerror(int32t aErrnum)
+{
+    /* 戻り値の初期化 */
+    char8t* tpRet = "Unknown error";
+
+    /* ここに実装してください。 */
+    char8t message[44][80] = {
+        "No error",
+        "Operation not permitted",
+        "No such file or directory",
+        "No such process",
+        "Interrupted function call",
+        "Input/output error",
+        "No such device or address",
+        "Arg list too long",
+        "Exec format error",
+        "Bad file descriptor",
+        "No child processes",
+        "Resource temporarily unavailable",
+        "Not enough space",
+        "Permission denied",
+        "Bad address",
+        "Unknown error",
+        "Resource device",
+        "File exists",
+        "Improper link",
+        "No such device",
+        "Not a directory",
+        "Is a directory",
+        "Invalid argument",
+        "Too many open files in system",
+        "Too many open files",
+        "Inappropriate I/O control operation",
+        "Unknown error",
+        "File too large",
+        "No space left on device",
+        "Invalid seek",
+        "Read-only file system",
+        "Too many links",
+        "Broken pipe",
+        "Domain error",
+        "Result too large",
+        "Unknown error",
+        "Resource deadlock avoided",
+        "Unknown error",
+        "Filename too long",
+        "No locks available",
+        "Function not implemented",
+        "Directory not empty",
+        "Illegal byte sequence",
+        "Unknown error"
+    };
+
+    for(int32t i = 0; i < 43; i++) {
+        if(aErrnum == i) {
+            StdStr_Strcpy(&em[0], &message[i][0]);
+            return &em[0];
+        }
+    }
+
+    StdStr_Strcpy(&em[0], &message[44][0]);
+    return &em[0];
+}
+```
+
+ログファイルから確認できない範囲のメッセージ，また本来存在しない範囲もカバーしてるつもりです．
+のせてるけどあんま露骨なコピペしないでね
