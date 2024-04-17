@@ -654,6 +654,6 @@ $\log_{10}(x) = \frac{\log_{e}(x)}{\log_{e}(10.0)}$
 高校数学より
 
 ### StdArt_Pow
-$x^(y) = e^{y * \log_{e}(x)}$
+$x^{(y)} = e^{y * \log_{e}(x)}$
 
 高校数学より
